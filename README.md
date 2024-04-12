@@ -6,7 +6,8 @@ Please complete the report problem below:
 Provide your profitable path, the amountIn, amountOut value for each swap, and your final reward (your tokenB balance).
 
 > Solution
-
+path: tokenB->tokenA->tokenD->tokenC->tokenB, tokenB balance=20.1298889441
+[5, 5.655321988655322, 2.4587813170979333, 5.0889272933015155, 20.129888944077443]
 ## Problem 2
 What is slippage in AMM, and how does Uniswap V2 address this issue? Please illustrate with a function as an example.
 The slippage means the difference between trade price and expected price. The Uniswap V2 address this issue by using the costant product formula. For example, in the traditional market, if we want to execute large trade, due to insufficient sell orders in the market, we must execute the order gradually. However, in this process, the price will increase, which make us pay higher price to execute the order. If we use Uniswap to address the problem, we find that even we execute the order gradually, we pay the same price eventually. It is because Uniswap V2 follow the constant formula: x'*y'=k, if x' is same, y' is same too regardless of the process.

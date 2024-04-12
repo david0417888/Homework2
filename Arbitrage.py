@@ -1,8 +1,8 @@
-def RESERVESFROMPOOL(POOLS, token_in, token_out):
-    if (token_in, token_out) in POOLS:
-        RESERVE_IN, RESERVE_OUT = POOLS[(token_in, token_out)]
+def RESERVES_FROM_POOL(POOLS, TOKEN_IN, TOKEN_OUT):
+    if (TOKEN_IN, TOKEN_OUT) in POOLS:
+        RESERVE_IN, RESERVE_OUT = POOLS[(TOKEN_IN, TOKEN_OUT)]
     else:
-        RESERVE_OUT, RESERVE_IN = POOLS[(token_out, token_in)]  # Swap reserves
+        RESERVE_OUT, RESERVE_IN = POOLS[(TOKEN_OUT, TOKEN_IN)]  # Swap reserves
     
     return RESERVE_IN, RESERVE_OUT
 POOLS = {
@@ -19,7 +19,7 @@ POOLS = {
 }
 tokens = ["tokenA", "tokenB", "tokenC", "tokenD", "tokenE"]
 path=[]
-def Find_Cycles_with_token_B(POOLS,tokens):
+def Find_Cycles_B(POOLS,tokens):
     cycles = []
     for token in tokens:
         if token == "tokenB":
@@ -27,15 +27,15 @@ def Find_Cycles_with_token_B(POOLS,tokens):
             Find_Cycles_recursive(POOLS,token, path, cycles)
     return cycles
 
-def CALCULATEOUTPUT(AMOUNT_in, RESERVE_IN, RESERVE_OUT):
+def AMOUNT_OUTPUT(AMOUNT_in, RESERVE_IN, RESERVE_OUT):
     # Example implementation, replace with actual logic to calculate output AMOUNT
     AMOUNT_in_with_fee = AMOUNT_in * 997  # Applying fee
     numerator = AMOUNT_in_with_fee * RESERVE_OUT
     denominator = RESERVE_IN * 1000 + AMOUNT_in_with_fee  # Adding fee to RESERVE_IN
-    AMOUNT_out = numerator / denominator
-    return AMOUNT_out
+    GET_AMOUNT_OUT = numerator / denominator
+    return GET_AMOUNT_OUT
 
-def AMOUNT_OUT(POOLS, AMOUNT_in, path):
+def GET_AMOUNT_OUT(POOLS, AMOUNT_in, path):
     if len(path) < 2:
         raise ValueError('Invalid path: Path should contain at least two tokens')
 
@@ -43,15 +43,15 @@ def AMOUNT_OUT(POOLS, AMOUNT_in, path):
     AMOUNTs[0] = AMOUNT_in
 
     for i in range(len(path) - 1):
-        RESERVE_IN, RESERVE_OUT = RESERVESFROMPOOL(POOLS, path[i], path[i + 1])
-        AMOUNTs[i + 1] = CALCULATEOUTPUT(AMOUNTs[i], RESERVE_IN, RESERVE_OUT)
+        RESERVE_IN, RESERVE_OUT = RESERVES_FROM_POOL(POOLS, path[i], path[i + 1])
+        AMOUNTs[i + 1] = AMOUNT_OUTPUT(AMOUNTs[i], RESERVE_IN, RESERVE_OUT)
 
     return AMOUNTs
 def Find_Cycles_recursive(POOLS,current_token, path, cycles):
     if len(path) > 2:
         pathB=path+["tokenB"]
         AMOUNT_in = 5
-        AMOUNTs_out = AMOUNT_OUT(POOLS, AMOUNT_in, pathB)
+        AMOUNTs_out = GET_AMOUNT_OUT(POOLS, AMOUNT_in, pathB)
         final_AMOUNT = AMOUNTs_out[-1]
         if final_AMOUNT > 20:
             cycles.append((pathB, final_AMOUNT))
@@ -61,7 +61,7 @@ def Find_Cycles_recursive(POOLS,current_token, path, cycles):
             new_path = path + [token]
             Find_Cycles_recursive( POOLS,token, new_path, cycles)
 
-cycles = Find_Cycles_with_token_B(POOLS, tokens)
+cycles = Find_Cycles_B(POOLS, tokens)
 
 MAX_AMOUNT = 0
 MAX_cycle = None
@@ -72,5 +72,5 @@ for cycle, final_AMOUNT in cycles:
 MAX_cycle_str = '->'.join(MAX_cycle) 
 print(f"path: {MAX_cycle_str}, tokenB balance={MAX_AMOUNT:.10f}")
 
-AMOUNTs_out = AMOUNT_OUT(POOLS,5, MAX_cycle)
+AMOUNTs_out = GET_AMOUNT_OUT(POOLS,5, MAX_cycle)
 print(AMOUNTs_out)
