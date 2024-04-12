@@ -27,32 +27,32 @@ def Find_Cycles_B(POOLS,tokens):
             Find_Cycles_recursive(POOLS,token, path, cycles)
     return cycles
 
-def AMOUNT_OUTPUT(AMOUNT_in, RESERVE_IN, RESERVE_OUT):
+def AMOUNT_OUTPUT(AMOUNT_IN, RESERVE_IN, RESERVE_OUT):
     # Example implementation, replace with actual logic to calculate output AMOUNT
-    AMOUNT_in_with_fee = AMOUNT_in * 997  # Applying fee
-    numerator = AMOUNT_in_with_fee * RESERVE_OUT
-    denominator = RESERVE_IN * 1000 + AMOUNT_in_with_fee  # Adding fee to RESERVE_IN
+    AMOUNT_IN_with_fee = AMOUNT_IN * 997  # Applying fee
+    numerator = AMOUNT_IN_with_fee * RESERVE_OUT
+    denominator = RESERVE_IN * 1000 + AMOUNT_IN_with_fee  # Adding fee to RESERVE_IN
     GET_AMOUNT_OUT = numerator / denominator
     return GET_AMOUNT_OUT
 
-def GET_AMOUNT_OUT(POOLS, AMOUNT_in, path):
+def GET_AMOUNT_OUT(POOLS, AMOUNT_IN, path):
     if len(path) < 2:
         raise ValueError('Invalid path: Path should contain at least two tokens')
 
-    AMOUNTs = [0] * len(path)
-    AMOUNTs[0] = AMOUNT_in
+    AMOUNTS = [0] * len(path)
+    AMOUNTS[0] = AMOUNT_IN
 
     for i in range(len(path) - 1):
         RESERVE_IN, RESERVE_OUT = RESERVES_FROM_POOL(POOLS, path[i], path[i + 1])
-        AMOUNTs[i + 1] = AMOUNT_OUTPUT(AMOUNTs[i], RESERVE_IN, RESERVE_OUT)
+        AMOUNTS[i + 1] = AMOUNT_OUTPUT(AMOUNTS[i], RESERVE_IN, RESERVE_OUT)
 
-    return AMOUNTs
+    return AMOUNTS
 def Find_Cycles_recursive(POOLS,current_token, path, cycles):
     if len(path) > 2:
         pathB=path+["tokenB"]
-        AMOUNT_in = 5
-        AMOUNTs_out = GET_AMOUNT_OUT(POOLS, AMOUNT_in, pathB)
-        final_AMOUNT = AMOUNTs_out[-1]
+        AMOUNT_IN = 5
+        AMOUNTS_out = GET_AMOUNT_OUT(POOLS, AMOUNT_IN, pathB)
+        final_AMOUNT = AMOUNTS_out[-1]
         if final_AMOUNT > 20:
             cycles.append((pathB, final_AMOUNT))
 
@@ -72,5 +72,5 @@ for cycle, final_AMOUNT in cycles:
 MAX_cycle_str = '->'.join(MAX_cycle) 
 print(f"path: {MAX_cycle_str}, tokenB balance={MAX_AMOUNT:.10f}")
 
-AMOUNTs_out = GET_AMOUNT_OUT(POOLS,5, MAX_cycle)
-print(AMOUNTs_out)
+AMOUNTS_out = GET_AMOUNT_OUT(POOLS,5, MAX_cycle)
+print(AMOUNTS_out)
